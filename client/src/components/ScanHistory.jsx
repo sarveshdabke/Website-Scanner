@@ -1,29 +1,54 @@
 import { useNavigate } from 'react-router';
+import { getScoreStatus } from '../utils/scoreUtils';
+
+function timeAgo(dateStr) {
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} hr ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
 
 function ScanHistory({ scans }) {
   const navigate = useNavigate();
 
   if (!scans || scans.length === 0) {
-    return <p className="text-gray-500 text-center py-6">No scans yet. Try scanning a website above.</p>;
+    return (
+      <div className="text-center py-10 bg-[#131820] rounded-xl border border-dashed border-[#1E2530]">
+        <p className="text-[#4A5261] text-sm font-mono-score">No scans yet — try scanning a website above.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-2">
-      {scans.map((scan) => (
-        <div
-          key={scan.id}
-          onClick={() => navigate(`/report/${scan.id}`)}
-          className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md cursor-pointer transition-shadow"
-        >
-          <div>
-            <p className="font-medium text-gray-800">{scan.url}</p>
-            <p className="text-xs text-gray-500">{new Date(scan.created_at).toLocaleString()}</p>
+    <div className="bg-[#131820] rounded-xl border border-[#1E2530] divide-y divide-[#1E2530] overflow-hidden">
+      {scans.map((scan) => {
+        const status = getScoreStatus(scan.overall_score);
+        return (
+          <div
+            key={scan.id}
+            onClick={() => navigate(`/report/${scan.id}`)}
+            className={`group flex items-center justify-between p-4 pl-3 border-l-4 hover:bg-[#161D27] cursor-pointer transition-colors ${status.border}`}
+            style={{ borderLeftColor: status.hex }}
+          >
+            <div className="flex items-center gap-3">
+              <span className={`w-2.5 h-2.5 rounded-full ${status.dot} ${status.glow}`} />
+              <div>
+                <p className="font-medium text-[#E8EDF2] text-sm">{scan.url}</p>
+                <p className="text-xs text-[#4A5261] font-mono-score">{timeAgo(scan.created_at)}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <p className={`text-sm font-medium hidden sm:block ${status.text}`}>{status.label}</p>
+              <div className={`text-lg font-bold font-mono-score ${status.text} w-10 text-right`}>{scan.overall_score}</div>
+              <span className="text-[#4A5261] group-hover:translate-x-1 transition-transform inline-block">→</span>
+            </div>
           </div>
-          <div className={`text-lg font-bold ${scan.overall_score >= 80 ? 'text-green-600' : scan.overall_score >= 50 ? 'text-yellow-600' : 'text-red-500'}`}>
-            {scan.overall_score}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

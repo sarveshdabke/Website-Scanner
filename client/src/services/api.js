@@ -4,10 +4,9 @@ const API_BASE_URL = 'http://localhost:5000/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60 seconds — kyunki PageSpeed API scan mein time leta hai
+  timeout: 60000,
 });
 
-// Naya scan start karne ke liye
 export const scanWebsite = async (url) => {
   try {
     const response = await apiClient.post('/scan', { url });
@@ -17,7 +16,6 @@ export const scanWebsite = async (url) => {
   }
 };
 
-// Saare past scans (history) nikalne ke liye
 export const getScanHistory = async () => {
   try {
     const response = await apiClient.get('/history');
@@ -27,7 +25,6 @@ export const getScanHistory = async () => {
   }
 };
 
-// Ek specific scan ka detail nikalne ke liye (ID se)
 export const getScanById = async (id) => {
   try {
     const response = await apiClient.get(`/scan/${id}`);
@@ -35,4 +32,20 @@ export const getScanById = async (id) => {
   } catch (error) {
     throw error.response?.data?.error || 'Could not fetch scan details';
   }
+};
+
+// Naya — AI analysis nikalne ke liye
+export const getAIAnalysis = async (id) => {
+  try {
+    const response = await apiClient.post(`/ai-analysis/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.error || 'Could not generate AI analysis';
+  }
+};
+
+// Naya — SSE se live scan progress track karne ke liye
+// Isse EventSource use karke call karenge, isliye ye sirf URL banata hai
+export const getScanStreamUrl = (url) => {
+  return `${API_BASE_URL}/scan-stream?url=${encodeURIComponent(url)}`;
 };
