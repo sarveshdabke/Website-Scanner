@@ -12,12 +12,15 @@ Analyze any website's **SEO health**, **performance metrics**, and **security po
 [![Groq](https://img.shields.io/badge/AI-Groq%20LLaMA%203.3-F55036)](https://groq.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+### 🌐 [**Live Demo →**](https://website-scanner-brown-iota.vercel.app/)
+
 </div>
 
 ---
 
 ## 📌 Table of Contents
 
+- [Live Demo](#-live-demo)
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
 - [Key Features](#-key-features)
@@ -30,6 +33,14 @@ Analyze any website's **SEO health**, **performance metrics**, and **security po
 - [API Reference](#-api-reference)
 - [Roadmap](#-roadmap)
 - [License](#-license)
+
+---
+
+## 🌐 Live Demo
+
+**Try it now:** [https://website-scanner-brown-iota.vercel.app/](https://website-scanner-brown-iota.vercel.app/)
+
+> ⚠️ **Note:** The backend is hosted on Render's free tier, which spins down after periods of inactivity. The **first scan** after inactivity may take 30–60 seconds extra to "wake up" the server — subsequent scans will be fast. This is a free-tier limitation, not a bug.
 
 ---
 
@@ -360,12 +371,28 @@ Open `http://localhost:5173` in your browser, enter any website URL, and watch t
 
 ---
 
+## ☁️ Deployment
+
+This project is deployed using a split-hosting approach:
+
+| Service | Platform | Notes |
+|---|---|---|
+| **Frontend** | [Vercel](https://vercel.com/) | Auto-deploys from `client/` on every push to `main` |
+| **Backend** | [Render](https://render.com/) | Free-tier web service, auto-deploys from `server/` |
+
+Both platforms are connected to this GitHub repository and redeploy automatically on every push. To deploy your own copy:
+
+1. **Backend (Render):** Create a new Web Service, set Root Directory to `server`, add your environment variables (`PAGESPEED_API_KEY`, `GROQ_API_KEY`, `NODE_VERSION=20.18.0`), and deploy.
+2. **Frontend (Vercel):** Import the repo, set Root Directory to `client`, add `VITE_API_URL` pointing to your Render backend URL (with `/api` suffix), and deploy.
+
+---
+
 ## 🗺️ Roadmap
 
+- [x] Deploy live demo (Vercel + Render)
 - [ ] User authentication for private scan history
 - [ ] Scheduled/recurring scans with email alerts
 - [ ] Competitor comparison mode (scan multiple URLs side by side)
-- [ ] Deploy live demo (Vercel + Render)
 - [ ] Export report as shareable public link
 
 ---
