@@ -1,19 +1,14 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const Database = require('better-sqlite3');
 const path = require('path');
 
 let dbInstance = null;
 
-const initializeDB = async () => {
+const initializeDB = () => {
   if (dbInstance) return dbInstance;
 
-  dbInstance = await open({
-    filename: path.join(__dirname, 'scanner.db'),
-    driver: sqlite3.Database
-  });
+  dbInstance = new Database(path.join(__dirname, 'scanner.db'));
 
-  // Table banao agar exist nahi karti
-  await dbInstance.exec(`
+  dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS scans (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       url TEXT NOT NULL,

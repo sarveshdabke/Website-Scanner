@@ -12,7 +12,6 @@ const handleScan = async (req, res) => {
   }
 
   try {
-    // Ab teeno parallel mein chalenge
     const [seoResult, securityResult, performanceResult] = await Promise.all([
       runSeoCheck(url),
       runSecurityCheck(url),
@@ -24,14 +23,14 @@ const handleScan = async (req, res) => {
     );
 
     const scanResult = {
-      url: url,
+      url,
       seo: seoResult,
       performance: performanceResult,
       security: securityResult,
       overallScore
     };
 
-    const scanId = await saveScan(scanResult);
+    const scanId = saveScan(scanResult); // await hata diya
 
     res.status(200).json({ id: scanId, ...scanResult });
   } catch (error) {
@@ -42,7 +41,7 @@ const handleScan = async (req, res) => {
 
 const handleGetAllScans = async (req, res) => {
   try {
-    const scans = await getAllScans();
+    const scans = getAllScans(); // await hata diya
     res.status(200).json(scans);
   } catch (error) {
     console.error(error);
@@ -53,7 +52,7 @@ const handleGetAllScans = async (req, res) => {
 const handleGetScanById = async (req, res) => {
   const { id } = req.params;
   try {
-    const scan = await getScanById(id);
+    const scan = getScanById(id); // await hata diya
     if (!scan) {
       return res.status(404).json({ error: 'Scan not found' });
     }
@@ -67,7 +66,7 @@ const handleGetScanById = async (req, res) => {
 const handleAIAnalysis = async (req, res) => {
   const { id } = req.params;
   try {
-    const scan = await getScanById(id);
+    const scan = getScanById(id); // await hata diya
     if (!scan) {
       return res.status(404).json({ error: 'Scan not found' });
     }
@@ -96,7 +95,6 @@ const handleScanStream = async (req, res) => {
     return res.status(400).json({ error: 'URL is required' });
   }
 
-  // SSE headers set karo
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -135,7 +133,7 @@ const handleScanStream = async (req, res) => {
       overallScore
     };
 
-    const scanId = await saveScan(scanResult);
+    const scanId = saveScan(scanResult); // await hata diya
     sendEvent('aggregating', 'complete');
 
     sendEvent('done', 'complete', { id: scanId, ...scanResult });
