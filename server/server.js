@@ -7,7 +7,17 @@ const { initializeDB } = require('./db/database');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Production mein sirf apni Vercel URL allow karo, dev mein sab allow
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL // Vercel URL yahan env variable se aayegi
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -16,7 +26,6 @@ app.get('/', (req, res) => {
 
 app.use('/api', scanRoutes);
 
-// Server start karne se pehle DB initialize karo
 const startServer = async () => {
   await initializeDB();
   app.listen(PORT, () => {
